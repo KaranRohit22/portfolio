@@ -342,13 +342,19 @@ code { font-family: var(--font-mono); }
   right: 0;
   z-index: 1000;
   height: var(--nav-h);
-  transition: background var(--duration-normal), box-shadow var(--duration-normal), backdrop-filter var(--duration-normal);
+  /* Always show a subtle background so logo is readable on any hero */
+  background: rgba(7,10,15,0.6);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-bottom: 1px solid transparent;
+  transition: background var(--duration-normal), box-shadow var(--duration-normal), border-color var(--duration-normal);
 }
 #navbar.scrolled {
-  background: rgba(7,10,15,0.85);
-  backdrop-filter: blur(20px) saturate(1.5);
-  -webkit-backdrop-filter: blur(20px) saturate(1.5);
-  box-shadow: 0 1px 0 var(--border-subtle);
+  background: rgba(7,10,15,0.92);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border-bottom-color: var(--border-subtle);
+  box-shadow: 0 1px 16px rgba(0,0,0,0.4);
 }
 
 .nav-container {
@@ -359,6 +365,9 @@ code { font-family: var(--font-mono); }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* Prevent logo + toggle from overflowing on small screens */
+  min-width: 0;
+  gap: var(--space-4);
 }
 
 .nav-logo {
@@ -367,6 +376,8 @@ code { font-family: var(--font-mono); }
   letter-spacing: -0.02em;
   color: var(--text-primary);
   transition: color var(--duration-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .nav-logo:hover { color: var(--accent-primary); }
 .logo-bracket { color: var(--accent-primary); }
@@ -403,9 +414,17 @@ code { font-family: var(--font-mono); }
 .nav-toggle {
   display: none;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 5px;
   padding: var(--space-2);
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  transition: background var(--duration-fast);
 }
+.nav-toggle:hover { background: rgba(255,255,255,0.06); }
 .bar {
   display: block;
   width: 22px;
@@ -1717,27 +1736,58 @@ footer {
 
 /* 768px */
 @media (max-width: 768px) {
-  :root { --nav-h: 64px; }
+  :root { --nav-h: 60px; }
 
   /* Mobile nav */
   .nav-toggle { display: flex; }
+
   .nav-links {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     position: fixed;
     top: var(--nav-h);
-    left: 0; right: 0;
-    background: rgba(7,10,15,0.97);
-    backdrop-filter: blur(20px);
-    padding: var(--space-6);
-    gap: var(--space-4);
+    left: 0;
+    right: 0;
+    background: rgba(7,10,15,0.98);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    padding: var(--space-5) var(--space-5) var(--space-8);
+    gap: var(--space-1);
     border-bottom: 1px solid var(--border-subtle);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
     transform: translateY(-110%);
-    transition: transform var(--duration-normal) var(--ease-out);
+    transition: transform var(--duration-normal) var(--ease-out),
+                opacity var(--duration-normal) var(--ease-out);
+    opacity: 0;
     z-index: 999;
+    /* Prevent overflow beyond viewport */
+    overflow: hidden;
   }
-  .nav-links.open { transform: translateY(0); }
-  .nav-link { font-size: var(--fs-base); }
+  .nav-links.open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .nav-link {
+    font-size: var(--fs-base);
+    padding: var(--space-3) 0;
+    width: 100%;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .nav-link:last-of-type { border-bottom: none; }
+
+  /* Show Resume button as a full-width item inside menu */
+  #nav-resume-btn {
+    margin-top: var(--space-3);
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Tighten nav padding on mobile so logo + hamburger fit */
+  .nav-container {
+    padding-inline: var(--space-4);
+  }
 
   /* Hero */
   .hero-container { grid-template-columns: 1fr; text-align: center; padding: var(--space-12) var(--space-5); gap: var(--space-10); }
@@ -1801,6 +1851,9 @@ footer {
   .project-card.featured .project-title { font-size: var(--fs-xl); }
   .github-card { padding: var(--space-5); }
   .lang-bar-item { grid-template-columns: 70px 1fr 40px; gap: var(--space-3); }
+  /* Slightly smaller logo so it never overflows at 375–480px */
+  .nav-logo { font-size: var(--fs-lg); }
+  .nav-container { padding-inline: var(--space-4); }
 }
 
 /* 375px */
